@@ -60,7 +60,7 @@ body.show #ctl{opacity:1}
 <img id="bgimg" src="assets/bg_talk_1.jpg" alt="">
 <div id="prog"></div>
 <div class="bar"><div class="g"><img src="assets/sp_thinkspace.png" alt="Thinkspace" style="height:50px"><img src="assets/sp_trnout.png" alt="trnout." style="height:42px"></div>
-<div class="g"><span>Sponsored by</span><img src="assets/sp_secureauth.png" alt="SecureAuth" style="height:50px"></div></div>
+<div class="g"><span>Sponsored by</span><img id="barsp" src="assets/sp_secureauth.png" alt="SecureAuth" style="height:50px"></div></div>
 <div id="slot"></div>
 </div>
 <div id="ctl"><button id="prev">‹</button><button id="reelb">Reel</button><button id="next">›</button><button id="fs">Full screen</button></div>
@@ -120,7 +120,7 @@ function build(){
  const m=nowMin(),deck=[],reel=[];
  deck.push(()=>`<div class="eye">Today at AI Days</div><h1 class="big">Agentic AI + Infrastructure Day</h1><div class="agenda">${SESS.map(s=>`<div class="tm ${m>=s.start&&m<s.end?"now":""}">${esc(s.time)}</div><div>${esc(s.title)}</div>`).join("")}</div>`);
  // Per session: sponsor, speakers + QR, talk background, speakers + QR again
- SESS.filter(s=>s.people.length).forEach(s=>{const a=s.sponsor==="asmbl",c=()=>sessionCard(s),t=a?()=>TALK_ASMBL():()=>TALK();t.bg=s.bg;t.talk=1;deck.push(a?spAsmbl:sp,c,t,c)});
+ SESS.filter(s=>s.people.length).forEach(s=>{const a=s.sponsor==="asmbl",c=()=>sessionCard(s),t=a?()=>TALK_ASMBL():()=>TALK();t.bg=s.bg;t.talk=1;if(a)c.asmbl=t.asmbl=1;deck.push(a?spAsmbl:sp,c,t,c)});
  const hh=()=>`<div class="eye">3:00–5:00 PM · downstairs</div><h1 class="big">Happy Hour &amp; Startup Showcase</h1><p class="lede">Meet today’s ${STARTUPS.length} startups, grab a drink, and find the people you came to meet.</p><div style="display:flex;align-items:center;gap:28px;margin-top:56px"><span class="r">HAPPY HOUR SPONSORED BY</span><img src="assets/sp_asmbl.png" alt="ASMBL" style="height:64px"></div>`;
  deck.push(sp);deck.push(hh);
  reel.push(sp);
@@ -135,7 +135,7 @@ function build(){
 let C=build(),mode="deck",di=0,ri=0,timer,started=0;
 const list=()=>C[mode],idx=()=>mode==="deck"?di:ri;
 function render(){const slot=document.getElementById("slot"),olds=[...slot.children];olds.forEach(o=>{if(!o.classList.contains("out")){o.classList.add("out");setTimeout(()=>o.remove(),500)}});
- const el=document.createElement("div");el.className="card";const f=list()[idx()];el.innerHTML=f();if(f.bg)document.getElementById("bgimg").src=`assets/bg_talk_${f.bg}.jpg`;document.getElementById("stage").classList.toggle("talk",!!f.talk);slot.appendChild(el);started=performance.now()}
+ const el=document.createElement("div");el.className="card";const f=list()[idx()];el.innerHTML=f();if(f.bg)document.getElementById("bgimg").src=`assets/bg_talk_${f.bg}.jpg`;document.getElementById("stage").classList.toggle("talk",!!f.talk);const b=document.getElementById("barsp");b.src=f.asmbl?"assets/sp_asmbl.png":"assets/sp_secureauth.png";b.alt=f.asmbl?"ASMBL":"SecureAuth";slot.appendChild(el);started=performance.now()}
 function go(n){clearTimeout(timer);C=build();const L=list().length;n=mode==="deck"?Math.max(0,Math.min(L-1,n)):(n+L)%L;mode==="deck"?di=n:ri=n;render();
  if(mode==="reel")timer=setTimeout(()=>go(ri+1),DUR);document.getElementById("reelb").textContent=mode==="reel"?"Stop reel":"Reel"}
 function setMode(m){mode=m;go(idx())}
