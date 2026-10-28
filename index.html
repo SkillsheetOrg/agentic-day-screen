@@ -120,7 +120,7 @@ function build(){
  const m=nowMin(),deck=[],reel=[];
  deck.push(()=>`<div class="eye">Today at AI Days</div><h1 class="big">Agentic AI + Infrastructure Day</h1><div class="agenda">${SESS.map(s=>`<div class="tm ${m>=s.start&&m<s.end?"now":""}">${esc(s.time)}</div><div>${esc(s.title)}</div>`).join("")}</div>`);
  // Per session: sponsor, speakers + QR, talk background, speakers + QR again
- SESS.filter(s=>s.people.length).forEach(s=>{const a=s.sponsor==="asmbl",c=()=>sessionCard(s),t=a?()=>TALK_ASMBL():()=>TALK();t.bg=s.bg;t.talk=1;if(a)c.asmbl=t.asmbl=spAsmbl.asmbl=1;deck.push(a?spAsmbl:sp,c,t,c)});
+ SESS.filter(s=>s.people.length).forEach(s=>{const a=s.sponsor==="asmbl",c=()=>sessionCard(s),t=a?()=>TALK_ASMBL():()=>TALK();t.bg=s.bg;t.talk=1;if(a)c.asmbl=t.asmbl=spAsmbl.asmbl=1;if(s.start===660){const ph=()=>"";ph.img="assets/venue_photo.webp";ph.talk=1;deck.push(ph)}deck.push(a?spAsmbl:sp,c,t,c)});
  const hh=()=>`<div class="eye">3:00–5:00 PM · downstairs</div><h1 class="big">Happy Hour &amp; Startup Showcase</h1><p class="lede">Meet today’s ${STARTUPS.length} startups, grab a drink, and find the people you came to meet.</p><div style="display:flex;align-items:center;gap:28px;margin-top:56px"><span class="r">HAPPY HOUR SPONSORED BY</span><img src="assets/sp_asmbl.png" alt="ASMBL" style="height:64px"></div>`;
  deck.push(sp);deck.push(hh);
  reel.push(sp);
@@ -135,7 +135,7 @@ function build(){
 let C=build(),mode="deck",di=0,ri=0,timer,started=0;
 const list=()=>C[mode],idx=()=>mode==="deck"?di:ri;
 function render(){const slot=document.getElementById("slot"),olds=[...slot.children];olds.forEach(o=>{if(!o.classList.contains("out")){o.classList.add("out");setTimeout(()=>o.remove(),500)}});
- const el=document.createElement("div");el.className="card";const f=list()[idx()];el.innerHTML=f();if(f.bg)document.getElementById("bgimg").src=`assets/bg_talk_${f.bg}.jpg`;document.getElementById("stage").classList.toggle("talk",!!f.talk);const b=document.getElementById("barsp");b.src=f.asmbl?"assets/sp_asmbl.png":"assets/sp_secureauth.png";b.alt=f.asmbl?"ASMBL":"SecureAuth";slot.appendChild(el);started=performance.now()}
+ const el=document.createElement("div");el.className="card";const f=list()[idx()];el.innerHTML=f();if(f.bg||f.img)document.getElementById("bgimg").src=f.img||`assets/bg_talk_${f.bg}.jpg`;document.getElementById("stage").classList.toggle("talk",!!f.talk);const b=document.getElementById("barsp");b.src=f.asmbl?"assets/sp_asmbl.png":"assets/sp_secureauth.png";b.alt=f.asmbl?"ASMBL":"SecureAuth";slot.appendChild(el);started=performance.now()}
 function go(n){clearTimeout(timer);C=build();const L=list().length;n=mode==="deck"?Math.max(0,Math.min(L-1,n)):(n+L)%L;mode==="deck"?di=n:ri=n;render();
  if(mode==="reel")timer=setTimeout(()=>go(ri+1),DUR);document.getElementById("reelb").textContent=mode==="reel"?"Stop reel":"Reel"}
 function setMode(m){mode=m;go(idx())}
@@ -144,7 +144,8 @@ function fit(){const s=Math.min(innerWidth/1920,innerHeight/1080),st=document.ge
 addEventListener("resize",fit);fit();
 document.getElementById("reelb").onclick=()=>setMode(mode==="reel"?"deck":"reel");
 document.getElementById("prev").onclick=()=>go(idx()-1);document.getElementById("next").onclick=()=>go(idx()+1);
-const fs=()=>{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen?.()};document.getElementById("fs").onclick=fs;
+const fs=()=>{const d=document,el=d.documentElement,on=d.fullscreenElement||d.webkitFullscreenElement;
+ try{const r=on?(d.exitFullscreen||d.webkitExitFullscreen).call(d):(el.requestFullscreen||el.webkitRequestFullscreen).call(el);r?.catch?.(e=>console.warn("fullscreen",e))}catch(e){console.warn("fullscreen",e)}};document.getElementById("fs").onclick=fs;
 addEventListener("keydown",e=>{const k=e.key;
  if(["ArrowRight","PageDown"," "].includes(k)){e.preventDefault();go(idx()+1)}
  else if(["ArrowLeft","PageUp"].includes(k)){e.preventDefault();go(idx()-1)}
