@@ -83,7 +83,7 @@ const SESS=[
   ["martin","PANELIST","Martin Tobias","General Partner, Incisive Ventures"],
   ["sheldon","PANELIST","Sheldon Menezes","Strategy & Corporate Development, ex-Microsoft, Zoom"],
   ["aniket","MODERATOR","Aniket Naravanekar","Co-founder & CEO, trnout.ai"]]},
- {start:840,end:900,time:"2:00–3:00 PM",bg:5,title:"AI in Healthcare: The patient experience",people:[
+ {start:840,end:900,time:"2:00–3:00 PM",bg:5,sponsor:"asmbl",title:"AI in Healthcare: The patient experience",people:[
   ["anthony","PANELIST","Anthony Maxin","Co-Founder & CTO, Apertur"],
   ["michael","PANELIST","Michael Nikitin","Co-Founder & CTO, AIDA Healthcare · CEO, Itirra"],
   ["hailey","MODERATOR","Hailey Clark","CEO, ASMBL"]]},
@@ -112,12 +112,15 @@ function sessionCard(s){
 // Blurb, CTA and handles from Cesar Vasquez (SecureAuth CMO), email 2026-10-23
 // Talk background: slide 2 of the AI Week slides deck (Google Slides 1GguMbbp...), SecureAuth logo top center
 const TALK=()=>`<div class="talklogo"><img src="assets/sp_secureauth.png" alt="SecureAuth" style="height:84px"></div>`;
+// ASMBL sponsors the 2:00 healthcare panel and the happy hour (Aniket, 2026-10-28). Logo only until ASMBL sends a blurb
+const TALK_ASMBL=()=>`<div class="talklogo"><img src="assets/sp_asmbl.png" alt="ASMBL" style="height:84px"></div>`;
+const spAsmbl=()=>`<div class="eye">This session is sponsored by</div><img src="assets/sp_asmbl.png" alt="ASMBL" style="height:110px;margin-top:20px;align-self:flex-start">`;
 const sp=()=>`<div class="eye">Thank you to our title sponsor</div><img src="assets/sp_secureauth.png" alt="SecureAuth" style="height:110px;margin-top:20px"><p class="lede" style="color:var(--ink)">SecureAuth is an enterprise identity security company protecting every identity: employees, customers, partners, and AI agents. SecureAuth Agent Authority provides continuous, transaction-level authorization for AI agents and non-human identities.</p><p class="lede">See Agent Authority in action at secureauth.com/free-trial/agent-authority</p><div class="handles"><div><div class="r">LINKEDIN</div><div class="v">linkedin.com/company/secureauth-corporation</div></div><div><div class="r">X</div><div class="v">@SecureAuth</div></div><div><div class="r">INSTAGRAM</div><div class="v">@SecureAuth</div></div></div>`;
 function build(){
  const m=nowMin(),deck=[],reel=[];
  deck.push(()=>`<div class="eye">Today at AI Days</div><h1 class="big">Agentic AI + Infrastructure Day</h1><div class="agenda">${SESS.map(s=>`<div class="tm ${m>=s.start&&m<s.end?"now":""}">${esc(s.time)}</div><div>${esc(s.title)}</div>`).join("")}</div>`);
  // Per session: sponsor, speakers + QR, talk background, speakers + QR again
- SESS.filter(s=>s.people.length).forEach(s=>{const c=()=>sessionCard(s),t=()=>TALK();t.bg=s.bg;t.talk=1;deck.push(sp,c,t,c)});
+ SESS.filter(s=>s.people.length).forEach(s=>{const a=s.sponsor==="asmbl",c=()=>sessionCard(s),t=a?()=>TALK_ASMBL():()=>TALK();t.bg=s.bg;t.talk=1;deck.push(a?spAsmbl:sp,c,t,c)});
  const hh=()=>`<div class="eye">3:00–5:00 PM · downstairs</div><h1 class="big">Happy Hour &amp; Startup Showcase</h1><p class="lede">Meet today’s ${STARTUPS.length} startups, grab a drink, and find the people you came to meet.</p><div style="display:flex;align-items:center;gap:28px;margin-top:56px"><span class="r">HAPPY HOUR SPONSORED BY</span><img src="assets/sp_asmbl.png" alt="ASMBL" style="height:64px"></div>`;
  deck.push(sp);deck.push(hh);
  reel.push(sp);
