@@ -120,7 +120,7 @@ function build(){
  const m=nowMin(),deck=[],reel=[];
  deck.push(()=>`<div class="eye">Today at AI Days</div><h1 class="big">Agentic AI + Infrastructure Day</h1><div class="agenda">${SESS.map(s=>`<div class="tm ${m>=s.start&&m<s.end?"now":""}">${esc(s.time)}</div><div>${esc(s.title)}</div>`).join("")}</div>`);
  // Per session: sponsor, speakers + QR, talk background, speakers + QR again
- SESS.filter(s=>s.people.length).forEach(s=>{const a=s.sponsor==="asmbl",c=()=>sessionCard(s),t=a?()=>TALK_ASMBL():()=>TALK();t.bg=s.bg;t.talk=1;if(a)c.asmbl=t.asmbl=1;deck.push(a?spAsmbl:sp,c,t,c)});
+ SESS.filter(s=>s.people.length).forEach(s=>{const a=s.sponsor==="asmbl",c=()=>sessionCard(s),t=a?()=>TALK_ASMBL():()=>TALK();t.bg=s.bg;t.talk=1;if(a)c.asmbl=t.asmbl=spAsmbl.asmbl=1;deck.push(a?spAsmbl:sp,c,t,c)});
  const hh=()=>`<div class="eye">3:00–5:00 PM · downstairs</div><h1 class="big">Happy Hour &amp; Startup Showcase</h1><p class="lede">Meet today’s ${STARTUPS.length} startups, grab a drink, and find the people you came to meet.</p><div style="display:flex;align-items:center;gap:28px;margin-top:56px"><span class="r">HAPPY HOUR SPONSORED BY</span><img src="assets/sp_asmbl.png" alt="ASMBL" style="height:64px"></div>`;
  deck.push(sp);deck.push(hh);
  reel.push(sp);
